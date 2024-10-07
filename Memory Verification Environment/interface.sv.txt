@@ -1,0 +1,14 @@
+// Memory interface
+interface inf(input logic clk);
+  
+  //declare the signals
+  logic rst;
+  logic enable;
+  logic rd_wr;
+  logic [7:0] wr_data;
+  logic [2:0] addr;
+  logic [7:0] rd_data;
+
+  modport DUT  (input clk, rst, enable, rd_wr, wr_data, addr, output rd_data);
+  
+endinterface

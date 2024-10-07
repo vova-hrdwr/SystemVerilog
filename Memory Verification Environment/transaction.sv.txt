@@ -1,0 +1,34 @@
+class transaction;  
+  //declare the transaction fields
+  rand bit rst;
+  rand bit rd_wr;
+  rand bit enable;
+  rand bit [7:0] wr_data;
+  rand bit [2:0] addr;
+  logic [7:0] rd_data;
+  function void display_in(string name);
+    $display("-------------------------");
+    $display("- %s, rst = %d, time is:%t",name, rst, $time);
+    $display("-------------------------");
+    $display("- enable = %d, rd_wr = %d, wr_data=%d, addr=%d",enable, rd_wr, wr_data, addr);
+    $display("-------------------------");
+  endfunction
+  function void display_out(string name);
+    $display("-------------------------");
+    $display("- %s, time is:%t",name, $time);
+    $display("-------------------------");
+    $display("- rd_data = %d",rd_data);
+    $display("-------------------------");
+  endfunction
+  /*function void display(string name);
+    $display("-------------------------");
+    $display("- %s, time is:%t",name, $time);
+    $display("-------------------------");
+    $display("- enable = %d, load = %d, data_in=%d",enable, load, data_in);
+    $display("- count = %d",count);
+    $display("-------------------------");
+  endfunction */
+  //in order to control the distribution of rst\enablbe, we use this method
+  constraint rst_con   {rst     dist {0 := 90 ,1 := 10};}
+  constraint enable_con {enable   dist {1 := 90 ,0 := 10};}
+endclass

@@ -1,0 +1,59 @@
+//gets the packet from the generator and drives the transaction packet items into the interface 
+//the interface is connected to the DUT, so that items driven into the interface will be driven 
+//into the DUT
+
+class driver;
+  
+  //count the number of transactions
+  int num_transactions;
+  
+  //create virtual interface handle
+  virtual inf vinf;
+  
+  //create mailbox handle
+  mailbox gen2drv;
+  
+  //constructor
+  function new(virtual inf vinf, mailbox gen2drv);
+    //get the interface
+    this.vinf = vinf;
+    //get the mailbox handle from env 
+    this.gen2drv = gen2drv;
+  endfunction
+  
+  task reset;
+    $display("[ --DRIVER-- ] ----- Reset Started -----");
+    vinf.rst = 1;
+    #30 vinf.rst = 0;
+    $display("[ --DRIVER-- ] ----- Reset Ended   -----");
+  endtask
+  
+  //Reset task, Reset the Interface signals to default/initial values
+  /*task reset;
+    wait(vinf.rst);
+    $display("[ --DRIVER-- ] ----- Reset Started -----");
+     vinf.rd_data <= 8'hFF;
+     vinf.addr  <= 3'h0;
+     vinf.enable  <= 1'b0;
+     vinf.rd_wr    <= 1'b0;
+    wait(vinf.rst);
+    $display("[ --DRIVER-- ] ----- Reset Ended   -----");
+  endtask*/
+  
+  //drives the transaction items into interface signals
+  task main;
+    forever begin
+      transaction trans;
+      gen2drv.get(trans);
+      @(negedge vinf.clk)
+      vinf.rst        <= trans.rst;
+      vinf.enable     <= trans.enable;
+      vinf.rd_wr      <= trans.rd_wr;
+      vinf.wr_data    <= trans.wr_data;
+      vinf.addr       <= trans.addr;
+      trans.display_in("[ --Driver-- ]");
+      num_transactions++;
+    end
+  endtask
+  
+endclass

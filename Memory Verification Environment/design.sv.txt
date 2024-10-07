@@ -1,0 +1,24 @@
+// Code your design here
+module memory(inf.DUT i_inf);
+  logic [7:0]mem[7:0];
+  logic [7:0]nc_data;
+  
+
+  always @(posedge i_inf.clk) begin
+    if (i_inf.rst) begin
+      foreach(mem[i])
+        mem[i] <= 8'hff;
+    end // if
+    else if (i_inf.enable) begin
+      if (i_inf.rd_wr) 
+        nc_data <= mem[i_inf.addr];
+      else
+        mem[i_inf.addr] <= i_inf.wr_data;
+    end //else if
+  end //always
+        
+  // Delay the output in 1 clock
+    always @(posedge i_inf.clk) begin
+        i_inf.rd_data <= nc_data;
+    end
+endmodule
