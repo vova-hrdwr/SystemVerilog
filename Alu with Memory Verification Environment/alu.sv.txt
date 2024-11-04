@@ -1,0 +1,19 @@
+module alu #(parameter  ADDR_WIDTH = 2,
+             parameter  DATA_WIDTH = 8)
+  (input logic [DATA_WIDTH-1:0] A, B, op, exe,
+   logic clk,
+   output logic [15:0] res_out
+  );
+  always @(*) begin
+    if (exe[0]) begin
+      case(op[2:0])
+        8'b000: res_out = 0;
+        8'b001: res_out = A+B;
+        8'b010: res_out = A-B;
+        8'b011: res_out = A*B;
+        8'b100: res_out = (B==0) ? 16'hDEAD : A/B;
+      endcase
+    end //if
+  end // begin
+  
+endmodule

@@ -1,0 +1,44 @@
+///testbench top is the top most file, in which DUT and Verification environment are connected. 
+
+`include "interface.sv"
+`include "random_test.sv"
+
+module top;
+  
+//clock and reset signal declaration
+bit clk;
+bit rst;
+  
+//clock generation
+always #5 clk = ~clk;
+ 
+
+  
+//reset generation
+initial begin
+  clk     = 0;		
+  rst     = 0;
+  #10 rst =	0; 
+  #20 rst = 1;
+  #10 rst =	0;
+  #1000 // Run for 300 time units
+    $finish; // End simulation
+end
+  
+  
+  
+//interface instance in order to connect DUT and testcase
+inf i_inf(clk,rst);
+  
+//testcase instance, interface handle is passed to test 
+test t1(i_inf);
+  
+//DUT instance, interface handle is passed to test 
+mem_alu ma1(i_inf);
+
+initial begin
+$dumpfile("dump.vcd"); $dumpvars;
+end
+
+  
+endmodule

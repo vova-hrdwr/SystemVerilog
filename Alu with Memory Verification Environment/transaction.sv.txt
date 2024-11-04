@@ -1,0 +1,39 @@
+class transaction 
+  //declare the transaction fields
+#(parameter ADDR_WIDTH = 2,
+  parameter DATA_WIDTH = 8);
+  rand bit rd_wr;
+  rand bit enable;
+  rand bit [DATA_WIDTH-1:0] wr_data;
+  rand bit [ADDR_WIDTH-1:0] addr;
+  logic [DATA_WIDTH-1:0] rd_data;
+  logic [15:0] res_out;
+  function void display_in(string name);
+    $display("-------------------------");
+    $display("- %s, time is:%t",name, $time);
+    $display("-------------------------");
+    $display("- enable = %d, rd_wr = %d, wr_data=%d, addr=%d",enable, rd_wr, wr_data, addr);
+    $display("-------------------------");
+  endfunction
+  function void display_out(string name);
+    $display("-------------------------");
+    $display("- %s, time is:%t",name, $time);
+    $display("-------------------------");
+    $display("- rd_data = %d, res_out=%d",rd_data, res_out);
+    $display("-------------------------");
+  endfunction
+  /*function void display(string name);
+    $display("-------------------------");
+    $display("- %s, time is:%t",name, $time);
+    $display("-------------------------");
+    $display("- enable = %d, load = %d, data_in=%d",enable, load, data_in);
+    $display("- count = %d",count);
+    $display("-------------------------");
+  endfunction */
+  //in order to control the distribution of rst\enablbe, we use this method
+  constraint enable_con {enable   dist {1 := 90 ,0 := 10};}
+  constraint rd_wr_con {rd_wr dist {1 := 5, 0 := 95};}
+  constraint addr_con {addr dist {0 := 20, 1 := 20, 2 := 40, 3 := 20};}
+  constraint wr_data_con {(addr == 2 && ~rd_wr) -> (wr_data inside {[0:4]});}
+                      
+endclass

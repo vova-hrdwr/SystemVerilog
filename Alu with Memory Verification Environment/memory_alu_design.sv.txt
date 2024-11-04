@@ -1,0 +1,31 @@
+`include "memory.sv"
+`include "alu.sv"
+module mem_alu #(parameter  ADDR_WIDTH = 2,
+                parameter  DATA_WIDTH = 8)
+  (inf.DUT i_inf);
+  logic [DATA_WIDTH-1:0] A, B, op, exe;
+  //Memory instance for the memory block
+  memory memory_instance(.clk(i_inf.clk),
+                         .rst(i_inf.rst),
+                         .enable(i_inf.enable),
+                         .rd_wr(i_inf.rd_wr),
+                         .wr_data(i_inf.wr_data),
+                         .addr(i_inf.addr),
+                         .rd_data(i_inf.rd_data)
+                        );
+  
+  //assign the operators
+  assign A = memory_instance.mem[0];
+  assign B = memory_instance.mem[1];
+  assign op = memory_instance.mem[2];
+  assign exe = memory_instance.mem[3];
+  
+  //alu instance
+  alu alu_instance(.A(A),
+                   .B(B),
+                   .op(op),
+                   .exe(exe),
+                   .res_out(i_inf.res_out)
+                  );
+endmodule
+  
